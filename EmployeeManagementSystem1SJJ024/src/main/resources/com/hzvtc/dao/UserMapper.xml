@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzvtc.dao.UserDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="userResultMap" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="role" column="role"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- 根据用户名和密码查找用户 -->
+    <select id="findByUsernameAndPasswordSJJ024" resultMap="userResultMap">
+        SELECT id, username, password, email, name, phone, role, status, create_time, update_time
+        FROM user 
+        WHERE username = #{username} AND password = #{password} AND status = 'active'
+    </select>
+
+    <!-- 根据用户名查找用户 -->
+    <select id="findByUsernameSJJ024" resultMap="userResultMap" parameterType="string">
+        SELECT id, username, password, email, name, phone, role, status, create_time, update_time
+        FROM user 
+        WHERE username = #{username}
+    </select>
+
+    <!-- 检查用户名是否存在 -->
+    <select id="existsByUsernameSJJ024" resultType="boolean" parameterType="string">
+        SELECT COUNT(*) > 0 FROM user WHERE username = #{username}
+    </select>
+
+    <!-- 插入新用户 -->
+    <insert id="insertSJJ024" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (username, password, email, name, phone, role, status, create_time, update_time) 
+        VALUES (#{username}, #{password}, #{email}, #{name}, #{phone}, #{role}, #{status}, NOW(), NOW())
+    </insert>
+
+    <!-- 更新用户信息 -->
+    <update id="updateSJJ024" parameterType="user">
+        UPDATE user SET 
+            username = #{username},
+            password = #{password},
+            email = #{email},
+            name = #{name},
+            phone = #{phone},
+            role = #{role},
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除用户 -->
+    <delete id="deleteSJJ024" parameterType="long">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+    <!-- 根据ID查找用户 -->
+    <select id="findByIdSJJ024" resultMap="userResultMap" parameterType="long">
+        SELECT id, username, password, email, name, phone, role, status, create_time, update_time
+        FROM user 
+        WHERE id = #{id}
+    </select>
+
+    <!-- 查询所有用户 -->
+    <select id="findAllSJJ024" resultMap="userResultMap">
+        SELECT id, username, password, email, name, phone, role, status, create_time, update_time
+        FROM user 
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 统计用户总数 -->
+    <select id="countSJJ024" resultType="int">
+        SELECT COUNT(*) FROM user WHERE status = 'active'
+    </select>
+
+</mapper>

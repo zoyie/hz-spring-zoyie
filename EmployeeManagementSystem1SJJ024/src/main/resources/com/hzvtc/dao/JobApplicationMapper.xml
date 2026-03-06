@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzvtc.dao.JobApplicationDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="jobApplicationResultMap" type="jobApplication">
+        <id property="id" column="id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="resume" column="resume"/>
+        <result property="coverLetter" column="cover_letter"/>
+        <result property="status" column="status"/>
+        <result property="feedback" column="feedback"/>
+        <result property="applyTime" column="apply_time"/>
+        <result property="processTime" column="process_time"/>
+        <association property="job" javaType="com.hzvtc.domain.Job">
+            <id property="id" column="j_id"/>
+            <result property="title" column="j_title"/>
+            <result property="department" column="j_department"/>
+            <result property="location" column="j_location"/>
+        </association>
+        <association property="user" javaType="com.hzvtc.domain.User">
+            <id property="id" column="u_id"/>
+            <result property="name" column="u_name"/>
+            <result property="email" column="u_email"/>
+            <result property="phone" column="u_phone"/>
+        </association>
+    </resultMap>
+
+    <!-- 查询所有申请 -->
+    <select id="findAllSJJ024" resultMap="jobApplicationResultMap">
+        SELECT ja.id, ja.job_id, ja.user_id, ja.resume, ja.cover_letter, 
+               ja.status, ja.feedback, ja.apply_time, ja.process_time,
+               j.id as j_id, j.title as j_title, j.department as j_department, j.location as j_location,
+               u.id as u_id, u.name as u_name, u.email as u_email, u.phone as u_phone
+        FROM job_application ja
+        LEFT JOIN job j ON ja.job_id = j.id
+        LEFT JOIN user u ON ja.user_id = u.id
+        ORDER BY ja.apply_time DESC
+    </select>
+
+    <!-- 根据ID查询申请 -->
+    <select id="findByIdSJJ024" resultMap="jobApplicationResultMap" parameterType="long">
+        SELECT ja.id, ja.job_id, ja.user_id, ja.resume, ja.cover_letter, 
+               ja.status, ja.feedback, ja.apply_time, ja.process_time,
+               j.id as j_id, j.title as j_title, j.department as j_department, j.location as j_location,
+               u.id as u_id, u.name as u_name, u.email as u_email, u.phone as u_phone
+        FROM job_application ja
+        LEFT JOIN job j ON ja.job_id = j.id
+        LEFT JOIN user u ON ja.user_id = u.id
+        WHERE ja.id = #{id}
+    </select>
+
+    <!-- 根据用户ID查询申请 -->
+    <select id="findByUserIdSJJ024" resultMap="jobApplicationResultMap" parameterType="long">
+        SELECT ja.id, ja.job_id, ja.user_id, ja.resume, ja.cover_letter, 
+               ja.status, ja.feedback, ja.apply_time, ja.process_time,
+               j.id as j_id, j.title as j_title, j.department as j_department, j.location as j_location,
+               u.id as u_id, u.name as u_name, u.email as u_email, u.phone as u_phone
+        FROM job_application ja
+        LEFT JOIN job j ON ja.job_id = j.id
+        LEFT JOIN user u ON ja.user_id = u.id
+        WHERE ja.user_id = #{userId}
+        ORDER BY ja.apply_time DESC
+    </select>
+
+    <!-- 根据职位ID查询申请 -->
+    <select id="findByJobIdSJJ024" resultMap="jobApplicationResultMap" parameterType="long">
+        SELECT ja.id, ja.job_id, ja.user_id, ja.resume, ja.cover_letter,
+               ja.status, ja.feedback, ja.apply_time, ja.process_time,
+               j.id as j_id, j.title as j_title, j.department as j_department, j.location as j_location,
+               u.id as u_id, u.name as u_name, u.email as u_email, u.phone as u_phone
+        FROM job_application ja
+        LEFT JOIN job j ON ja.job_id = j.id
+        LEFT JOIN user u ON ja.user_id = u.id
+        WHERE ja.job_id = #{jobId}
+        ORDER BY ja.apply_time DESC
+    </select>
+
+    <!-- 插入申请 -->
+    <insert id="insertSJJ024" parameterType="jobApplication" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO job_application (job_id, user_id, resume, cover_letter, status, apply_time) 
+        VALUES (#{jobId}, #{userId}, #{resume}, #{coverLetter}, #{status}, NOW())
+    </insert>
+
+    <!-- 更新申请状态 -->
+    <update id="updateStatusSJJ024">
+        UPDATE job_application SET 
+            status = #{status},
+            feedback = #{feedback},
+            process_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除申请 -->
+    <delete id="deleteSJJ024" parameterType="long">
+        DELETE FROM job_application WHERE id = #{id}
+    </delete>
+
+    <!-- 统计申请总数 -->
+    <select id="countSJJ024" resultType="int">
+        SELECT COUNT(*) FROM job_application
+    </select>
+
+    <!-- 统计待处理申请数 -->
+    <select id="countPendingSJJ024" resultType="int">
+        SELECT COUNT(*) FROM job_application WHERE status = 'pending'
+    </select>
+
+    <delete id="deleteByJobIdSJJ024">
+        DELETE FROM job_applications WHERE job_id = #{jobId}
+    </delete>
+
+
+</mapper>

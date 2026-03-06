@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzvtc.dao.JobDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="jobResultMap" type="job">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="requirements" column="requirements"/>
+        <result property="department" column="department"/>
+        <result property="location" column="location"/>
+        <result property="salaryRange" column="salary_range"/>
+        <result property="jobType" column="job_type"/>
+        <result property="status" column="status"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- 查询所有职位 -->
+    <select id="findAllSJJ024" resultMap="jobResultMap">
+        SELECT id, title, description, requirements, department, location, 
+               salary_range, job_type, status, created_by, create_time, update_time
+        FROM job ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询活跃职位 -->
+    <select id="findActiveJobsSJJ024" resultMap="jobResultMap">
+        SELECT id, title, description, requirements, department, location, 
+               salary_range, job_type, status, created_by, create_time, update_time
+        FROM job WHERE status = 'active' ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据ID查询职位 -->
+    <select id="findByIdSJJ024" resultMap="jobResultMap" parameterType="long">
+        SELECT id, title, description, requirements, department, location, 
+               salary_range, job_type, status, created_by, create_time, update_time
+        FROM job WHERE id = #{id}
+    </select>
+
+    <!-- 插入职位 -->
+    <insert id="insertSJJ024" parameterType="job" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO job (title, description, requirements, department, location, 
+                        salary_range, job_type, status, created_by, create_time, update_time) 
+        VALUES (#{title}, #{description}, #{requirements}, #{department}, #{location}, 
+                #{salaryRange}, #{jobType}, #{status}, #{createdBy}, NOW(), NOW())
+    </insert>
+
+    <!-- 更新职位信息 -->
+    <update id="updateSJJ024" parameterType="job">
+        UPDATE job SET 
+            title = #{title},
+            description = #{description},
+            requirements = #{requirements},
+            department = #{department},
+            location = #{location},
+            salary_range = #{salaryRange},
+            job_type = #{jobType},
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 统计职位总数 -->
+    <select id="countSJJ024" resultType="int">
+        SELECT COUNT(*) FROM job
+    </select>
+
+    <!-- 统计活跃职位数 -->
+    <select id="countActiveSJJ024" resultType="int">
+        SELECT COUNT(*) FROM job WHERE status = 'active'
+    </select>
+
+</mapper>

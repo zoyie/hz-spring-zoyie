@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzvtc.dao.EmployeeDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="employeeResultMap" type="employee">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="position" column="position"/>
+        <result property="contact" column="contact"/>
+    </resultMap>
+
+    <!-- 查询所有员工 -->
+    <select id="findAllSJJ024" resultMap="employeeResultMap">
+        SELECT id, name, gender, position, contact FROM employee ORDER BY id DESC
+    </select>
+
+    <!-- 根据ID查询员工 -->
+    <select id="findByIdSJJ024" resultMap="employeeResultMap" parameterType="int">
+        SELECT id, name, gender, position, contact FROM employee WHERE id = #{id}
+    </select>
+
+    <!-- 插入员工 -->
+    <insert id="insertSJJ024" parameterType="employee" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO employee (name, gender, position, contact)
+        VALUES (#{name}, #{gender}, #{position}, #{contact})
+    </insert>
+
+    <!-- 更新员工信息 -->
+    <update id="updateSJJ024" parameterType="employee">
+        UPDATE employee SET
+            name = #{name},
+            gender = #{gender},
+            position = #{position},
+            contact = #{contact}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除员工 -->
+    <delete id="deleteSJJ024" parameterType="int">
+        DELETE FROM employee WHERE id = #{id}
+    </delete>
+
+    <!-- 根据条件查询员工 -->
+    <select id="findByConditionSJJ024" resultMap="employeeResultMap">
+        SELECT id, name, gender, position, contact FROM employee
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND gender = #{gender}
+            </if>
+            <if test="position != null and position != ''">
+                AND position LIKE CONCAT('%', #{position}, '%')
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <!-- 统计员工总数 -->
+    <select id="countSJJ024" resultType="int">
+        SELECT COUNT(*) FROM employee
+    </select>
+
+</mapper>
